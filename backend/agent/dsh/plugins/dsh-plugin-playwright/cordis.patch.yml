@@ -1,0 +1,37 @@
+# dsh-plugin-playwright bundle patch: contributes the plugin row when this
+# package is installed into a profile (declared via `dsh.bundle.patch` in
+# package.json). `dsh plugin --profile web add dsh-plugin-playwright` activates
+# this layer automatically.
+#
+# The config below ships PORTABLE defaults (headless, conservative). Do not
+# put machine-specific settings here — override them from the profile's
+# cordis.patch.yml with an id-targeted patch that RESTATES the full config
+# (a patch replaces the row's whole config rather than merging):
+#
+#   - id: dsh-plugin-playwright
+#     config:
+#       browser: chromium
+#       headless: false              # visible browser window
+#       executablePath: '/path/to/browser'   # use an existing browser build
+#       ...
+- insert:
+    - id: dsh-plugin-playwright
+      name: dsh-plugin-playwright
+      config:
+        browser: chromium
+        headless: true
+        isolated: false
+        viewport:
+          width: 1280
+          height: 720
+        outputDir: .dsh/playwright
+        timeoutMs: 30000
+        navigationWaitUntil: load
+        capabilities:
+          accessibility: true
+          screenshot: true
+          pdf: true
+          network: true
+          tracing: false
+          storageState: false
+        evaluate: false

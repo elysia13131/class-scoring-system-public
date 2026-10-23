@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent 界面原型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .chat-container {
+            height: calc(100vh - 200px);
+        }
+        
+        .message-enter {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .typing-indicator span {
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .sidebar-item:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+        }
+        
+        .sidebar-item.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.2) 0%, transparent 100%);
+            border-left: 3px solid #667eea;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .memory-card {
+            transition: all 0.3s ease;
+        }
+
+        .memory-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .tool-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- 左侧边栏 -->
+        <div class="w-64 bg-white shadow-lg flex flex-col">
+            <!-- Logo区域 -->
+            <div class="p-4 gradient-bg text-white">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-robot text-2xl"></i>
+                    <div>
+                        <h1 class="font-bold text-lg">AI 助手</h1>
+                        <p class="text-xs opacity-80">智能班级助手</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户信息 -->
+            <div class="p-4 border-b">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white font-semibold">
+                        张
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-medium text-sm">张东阳</p>
+                        <p class="text-xs text-gray-500">樊宇博班 · 成员</p>
+                    </div>
+                    <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                </div>
+            </div>
+
+            <!-- 导航菜单 -->
+            <nav class="flex-1 p-4 overflow-y-auto">
+                <div class="space-y-1">
+                    <a href="#" class="sidebar-item active flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-700" onclick="showSection('chat')">
+                        <i class="fas fa-comments w-5"></i>
+                        <span>对话聊天</span>
+                        <span class="ml-auto bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">新</span>
+                    </a>
+                    
+                    <a href="#" class="sidebar-item flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600" onclick="showSection('memory')">
+                        <i class="fas fa-brain w-5"></i>
+                        <span>记忆管理</span>
+                    </a>
+
+                    <a href="#" class="sidebar-item flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600" onclick="showSection('tools')">
+                        <i class="fas fa-toolbox w-5"></i>
+                        <span>工具箱</span>
+                    </a>
+
+                    <a href="#" class="sidebar-item flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600" onclick="showSection('settings')">
+                        <i class="fas fa-cog w-5"></i>
+                        <span>设置</span>
+                    </a>
+                </div>
+
+                <div class="mt-6 pt-4 border-t">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">快捷操作</p>
+                    <div class="space-y-1">
+                        <button onclick="quickAction('查看本周评分')" class="w-full text-left sidebar-item flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-gray-600">
+                            <i class="fas fa-chart-line w-5 text-green-500"></i>
+                            <span>本周评分</span>
+                        </button>
+                        <button onclick="quickAction('生成我的雷达图')" class="w-full text-left sidebar-item flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-gray-600">
+                            <i class="fas fa-spider w-5 text-purple-500"></i>
+                            <span>雷达图</span>
+                        </button>
+                        <button onclick="quickAction('分析体能趋势')" class="w-full text-left sidebar-item flex items-center space-x-3 px-3 py-2 rounded-lg text-sm text-gray-600">
+                            <i class="fas fa-running w-5 text-orange-500"></i>
+                            <span>体能趋势</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 底部状态 -->
+            <div class="p-4 border-t bg-gray-50">
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <span><i class="fas fa-memory mr-1"></i> 记忆已学习: 127条</span>
+                    <span><i class="fas fa-clock mr-1"></i> 会话时长: 15分钟</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col">
+            <!-- 对话区域 -->
+            <div id="chat-section" class="flex-1 flex flex-col">
+                <!-- 头部 -->
+                <div class="bg-white border-b px-6 py-4 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">💬 智能对话</h2>
+                        <p class="text-sm text-gray-500 mt-1">我可以帮你查询成绩、分析数据、管理个人信息等</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="clearChat()" class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition">
+                            <i class="fas fa-trash-alt mr-2"></i>清空对话
+                        </button>
+                        <button onclick="toggleAdminMode()" id="admin-btn" class="px-4 py-2 text-sm bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition">
+                            <i class="fas fa-shield-alt mr-2"></i>管理员模式
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 聊天消息区 -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 chat-container">
+                    <!-- AI欢迎消息 -->
+                    <div class="message-enter flex items-start space-x-3 max-w-3xl mx-auto">
+                        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-robot text-sm"></i>
+                        </div>
+                        <div class="flex-1 glass-effect rounded-2xl rounded-tl-none p-4 shadow-sm">
+                            <p class="text-gray-800 leading-relaxed">
+                                你好！我是你的<strong class="text-purple-600">AI智能助手</strong> 🎯
+                            </p>
+                            <p class="text-gray-700 mt-2">
+                                我可以帮你：
+                            </p>
+                            <ul class="mt-2 space-y-1 text-sm text-gray-600">
+                                <li>📊 <strong>查询和分析成绩数据</strong>（雷达图、趋势图）</li>
+                                <li>🧠 <strong>心理气象站</strong>（关系分析、心情评估）</li>
+                                <li>📁 <strong>文件操作</strong>（导入导出Excel/Word）</li>
+                                <li>⚙️ <strong>系统管理</strong>（管理员专属功能）</li>
+                            </ul>
+                            <p class="mt-3 text-gray-600 text-sm">
+                                我会记住你的偏好和习惯，越用越懂你！试试问我什么吧～
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 示例用户消息 -->
+                    <div class="message-enter flex items-start space-x-3 max-w-3xl ml-auto mr-auto">
+                        <div class="flex-1 bg-blue-500 text-white rounded-2xl rounded-tr-none p-4 shadow-sm">
+                            <p>帮我看看我这周的学习成绩怎么样？</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white flex-shrink-0 font-medium text-sm">
+                            张
+                        </div>
+                    </div>
+
+                    <!-- AI回复（包含图表） -->
+                    <div class="message-enter flex items-start space-x-3 max-w-3xl mx-auto">
+                        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-robot text-sm"></i>
+                        </div>
+                        <div class="flex-1 glass-effect rounded-2xl rounded-tl-none p-4 shadow-sm">
+                            <p class="text-gray-800 mb-3">
+                                好的！这是你本周的<strong>学习成绩维度</strong>详情：
+                            </p>
+                            
+                            <!-- 图表展示区域 -->
+                            <div class="chart-container p-4 my-3">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-800">
+                                        <i class="fas fa-chart-bar text-blue-500 mr-2"></i>
+                                        学习成绩六维雷达图
+                                    </h4>
+                                    <div class="flex space-x-2">
+                                        <button class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded">
+                                            <i class="fas fa-download mr-1"></i>下载
+                                        </button>
+                                        <button class="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded">
+                                            <i class="fas fa-expand mr-1"></i>全屏
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- 模拟雷达图 -->
+                                <div class="relative h-64 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-4">
+                                    <svg viewBox="0 0 300 300" class="w-full h-full">
+                                        <!-- 雷达图背景网格 -->
+                                        <polygon points="150,30 270,110 230,250 70,250 30,110" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                                        <polygon points="150,60 240,120 210,220 90,220 60,120" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                                        <polygon points="150,90 210,130 190,190 110,190 90,130" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                                        
+                                        <!-- 数据多边形 -->
+                                        <polygon points="150,45 255,115 215,235 85,235 40,115" 
+                                                fill="rgba(102, 126, 234, 0.3)" 
+                                                stroke="#667eea" 
+                                                stroke-width="2"/>
+                                        
+                                        <!-- 数据点 -->
+                                        <circle cx="150" cy="45" r="4" fill="#667eea"/>
+                                        <circle cx="255" cy="115" r="4" fill="#667eea"/>
+                                        <circle cx="215" cy="235" r="4" fill="#667eea"/>
+                                        <circle cx="85" cy="235" r="4" fill="#667eea"/>
+                                        <circle cx="40" cy="115" r="4" fill="#667eea"/>
+                                        
+                                        <!-- 标签 -->
+                                        <text x="150" y="20" text-anchor="middle" class="text-xs fill-gray-600">预习准备</text>
+                                        <text x="280" y="110" text-anchor="start" class="text-xs fill-gray-600">课堂参与</text>
+                                        <text x="245" y="265" text-anchor="middle" class="text-xs fill-gray-600">复习巩固</text>
+                                        <text x="55" y="265" text-anchor="middle" class="text-xs fill-gray-600">知识应用</text>
+                                        <text x="15" y="110" text-anchor="end" class="text-xs fill-gray-600">学业成果</text>
+                                    </svg>
+                                    
+                                    <!-- 图例 -->
+                                    <div class="absolute bottom-2 right-2 bg-white/80 px-2 py-1 rounded text-xs">
+                                        <span class="inline-block w-3 h-3 bg-purple-500 rounded-full mr-1"></span>
+                                        本周得分: <strong>8.2/10</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 详细数据表格 -->
+                            <div class="bg-gray-50 rounded-lg p-3 mt-3">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left py-2 text-gray-600">二级指标</th>
+                                            <th class="text-center py-2 text-gray-600">得分</th>
+                                            <th class="text-left py-2 text-gray-600">评价</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-b border-gray-100">
+                                            <td class="py-2">预习准备</td>
+                                            <td class="text-center font-semibold text-green-600">2.0/2</td>
+                                            <td class="text-gray-600">优秀 ✨</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-100">
+                                            <td class="py-2">课堂参与</td>
+                                            <td class="text-center font-semibold text-yellow-600">1.5/2</td>
+                                            <td class="text-gray-600">良好 👍</td>
+                                        </tr>
+                                        <tr class="border-b border-gray-100">
+                                            <td class="py-2">复习巩固</td>
+                                            <td class="text-center font-semibold text-green-600">2.0/2</td>
+                                            <td class="text-gray-600">优秀 ✨</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2">知识应用</td>
+                                            <td class="text-center font-semibold text-yellow-600">1.5/2</td>
+                                            <td class="text-gray-600">良好 👍</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="mt-3 text-gray-600 text-sm">
+                                💡 <strong>建议：</strong>你的预习和复习做得很好！可以加强课堂互动和知识应用练习。需要我帮你制定提升计划吗？
+                            </p>
+
+                            <!-- 工具调用标记 -->
+                            <div class="mt-3 flex items-center space-x-2 text-xs text-gray-400">
+                                <span class="tool-badge bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                                    <i class="fas fa-toolbox mr-1"></i>工具调用: query_scores
+                                </span>
+                                <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full">
+                                    <i class="fas fa-chart-pie mr-1"></i>图表生成: radar_chart
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 输入区域 -->
+                <div class="bg-white border-t p-4">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="flex items-end space-x-3">
+                            <div class="flex-1 relative">
+                                <textarea 
+                                    id="user-input"
+                                    placeholder="输入你的问题... (按 Enter 发送，Shift+Enter 换行)"
+                                    rows="2"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                                    onkeypress="handleKeyPress(event)"
+                                ></textarea>
+                                <div class="absolute right-3 bottom-3 flex items-center space-x-2 text-gray-400 text-sm">
+                                    <button title="上传文件" class="hover:text-purple-500 transition">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    <button title="语音输入" class="hover:text-purple-500 transition">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button 
+                                onclick="sendMessage()"
+                                class="px-6 py-3 gradient-bg text-white rounded-xl hover:opacity-90 transition font-medium"
+                            >
+                                <i class="fas fa-paper-plane mr-2"></i>发送
+                            </button>
+                        </div>
+                        
+                        <!-- 快捷建议 -->
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <button onclick="quickSuggestion('查看我的BMI数据')" class="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition">
+                                📊 查看BMI数据
+                            </button>
+                            <button onclick="quickSuggestion('帮我分析最近的心理状态')" class="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition">
+                                🧠 心理状态分析
+                            </button>
+                            <button onclick="quickSuggestion('导出我的成绩报告')" class="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition">
+                                📄 导出报告
+                            </button>
+                            <button onclick="quickSuggestion('对比我和班长的成绩')" class="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-600 transition">
+                                ⚖️ 成绩对比
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 记忆管理区域（默认隐藏） -->
+            <div id="memory-section" class="hidden flex-1 p-6 overflow-y-auto">
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-brain text-purple-500 mr-2"></i>记忆管理系统
+                        </h2>
+                        <p class="text-gray-500 mt-1">AI通过不断学习来记住你的偏好和习惯</p>
+                    </div>
+
+                    <!-- 记忆统计卡片 -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="memory-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-blue-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">短期记忆</p>
+                                    <p class="text-2xl font-bold text-gray-800 mt-1">18 条</p>
+                                    <p class="text-xs text-gray-400 mt-1">当前会话</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-clock text-blue-500 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="memory-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-green-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">长期记忆</p>
+                                    <p class="text-2xl font-bold text-gray-800 mt-1">109 条</p>
+                                    <p class="text-xs text-gray-400 mt-1">跨会话保留</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-database text-green-500 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="memory-card bg-white rounded-xl p-5 shadow-sm border-l-4 border-purple-500">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">偏好画像</p>
+                                    <p class="text-2xl font-bold text-gray-800 mt-1">87%</p>
+                                    <p class="text-xs text-gray-400 mt-1">匹配度</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-cog text-purple-500 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 语言风格适应 -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+                        <h3 class="font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-language text-blue-500 mr-2"></i>语言风格适应
+                        </h3>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-sm text-gray-600 block mb-2">正式程度</label>
+                                <div class="flex items-center space-x-3">
+                                    <input type="range" min="0" max="100" value="70" class="flex-1 accent-purple-500">
+                                    <span class="text-sm font-medium text-gray-700 w-16">70%</span>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">偏正式风格</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-600 block mb-2">回复长度</label>
+                                <select class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option selected>中等详细</option>
+                                    <option>简洁明了</option>
+                                    <option>非常详细</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-600 block mb-2">幽默程度</label>
+                                <div class="flex items-center space-x-3">
+                                    <input type="range" min="0" max="100" value="30" class="flex-1 accent-purple-500">
+                                    <span class="text-sm font-medium text-gray-700 w-16">30%</span>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">偶尔幽默</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-600 block mb-2">技术深度</label>
+                                <div class="flex items-center space-x-3">
+                                    <input type="range" min="0" max="100" value="80" class="flex-1 accent-purple-500">
+                                    <span class="text-sm font-medium text-gray-700 w-16">80%</span>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">喜欢专业术语</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 常用功能偏好 -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-star text-yellow-500 mr-2"></i>常用功能偏好
+                        </h3>
+                        <div class="grid grid-cols-4 gap-3">
+                            <div class="bg-blue-50 rounded-lg p-3 text-center">
+                                <i class="fas fa-chart-line text-blue-500 text-xl mb-2"></i>
+                                <p class="text-sm font-medium text-gray-700">成绩分析</p>
+                                <p class="text-xs text-gray-500 mt-1">使用 23 次</p>
+                            </div>
+                            <div class="bg-purple-50 rounded-lg p-3 text-center">
+                                <i class="fas fa-spider text-purple-500 text-xl mb-2"></i>
+                                <p class="text-sm font-medium text-gray-700">雷达图</p>
+                                <p class="text-xs text-gray-500 mt-1">使用 18 次</p>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-3 text-center">
+                                <i class="fas fa-running text-green-500 text-xl mb-2"></i>
+                                <p class="text-sm font-medium text-gray-700">体能数据</p>
+                                <p class="text-xs text-gray-500 mt-1">使用 15 次</p>
+                            </div>
+                            <div class="bg-orange-50 rounded-lg p-3 text-center">
+                                <i class="fas fa-file-export text-orange-500 text-xl mb-2"></i>
+                                <p class="text-sm font-medium text-gray-700">导出报告</p>
+                                <p class="text-xs text-gray-500 mt-1">使用 9 次</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工具箱区域（默认隐藏） -->
+            <div id="tools-section" class="hidden flex-1 p-6 overflow-y-auto">
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-toolbox text-green-500 mr-2"></i>工具箱
+                        </h2>
+                        <p class="text-gray-500 mt-1">AI可以调用的所有系统功能</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- 成绩分析工具 -->
+                        <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-chart-bar text-blue-500 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">成绩分析工具</h3>
+                                    <p class="text-sm text-gray-500 mt-1">查询评分、生成图表、排名对比</p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded">query_scores</span>
+                                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded">radar_chart</span>
+                                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded">trend_analysis</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 心理气象站工具 -->
+                        <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-heart text-purple-500 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">心理气象站</h3>
+                                    <p class="text-sm text-gray-500 mt-1">关系提名、心情标签、社交地图</p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <span class="text-xs px-2 py-1 bg-purple-100 text-purple-600 rounded">relationship</span>
+                                        <span class="text-xs px-2 py-1 bg-purple-100 text-purple-600 rounded">mood_tracker</span>
+                                        <span class="text-xs px-2 py-1 bg-purple-100 text-purple-600 rounded">social_map</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 文件操作工具 -->
+                        <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-file-export text-green-500 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">文件操作工具</h3>
+                                    <p class="text-sm text-gray-500 mt-1">导入Excel、导出Word/PDF</p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <span class="text-xs px-2 py-1 bg-green-100 text-green-600 rounded">import_excel</span>
+                                        <span class="text-xs px-2 py-1 bg-green-100 text-green-600 rounded">export_docx</span>
+                                        <span class="text-xs px-2 py-1 bg-green-100 text-green-600 rounded">export_pdf</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 系统管理工具（管理员） -->
+                        <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition border-2 border-red-200">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-user-shield text-red-500 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <h3 class="font-semibold text-gray-800">系统管理工具</h3>
+                                        <span class="text-xs px-2 py-0.5 bg-red-100 text-red-600 rounded">需管理员权限</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">成员管理、班级配置、系统设置</p>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <span class="text-xs px-2 py-1 bg-red-100 text-red-600 rounded">manage_members</span>
+                                        <span class="text-xs px-2 py-1 bg-red-100 text-red-600 rounded">class_config</span>
+                                        <span class="text-xs px-2 py-1 bg-red-100 text-red-600 rounded">system_settings</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // 隐藏所有section
+            document.getElementById('chat-section').classList.add('hidden');
+            document.getElementById('memory-section').classList.add('hidden');
+            document.getElementById('tools-section').classList.add('hidden');
+            
+            // 显示目标section
+            document.getElementById(sectionId + '-section').classList.remove('hidden');
+            
+            // 更新侧边栏active状态
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.sidebar-item').classList.add('active');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+
+            // 显示打字指示器
+            showTypingIndicator();
+
+            // 模拟AI回复
+            setTimeout(() => {
+                hideTypingIndicator();
+                
+                if (message.includes('成绩') || message.includes('评分')) {
+                    addAIMessageWithChart();
+                } else {
+                    addMessage('我理解了你的问题。让我为你处理...', 'ai');
+                }
+            }, 1500);
+        }
+
+        function addMessage(content, type) {
+            const container = document.getElementById('chat-messages');
+            const isUser = type === 'user';
+            
+            const messageHtml = `
+                <div class="message-enter flex items-start space-x-3 max-w-3xl ${isUser ? 'ml-auto' : 'mx-auto'}">
+                    ${!isUser ? `
+                        <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-robot text-sm"></i>
+                        </div>
+                    ` : ''}
+                    <div class="flex-1 ${isUser ? 'bg-blue-500 text-white rounded-2xl rounded-tr-none' : 'glass-effect rounded-2xl rounded-tl-none'} p-4 shadow-sm">
+                        <p>${content}</p>
+                    </div>
+                    ${isUser ? `
+                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white flex-shrink-0 font-medium text-sm">
+                            张
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', messageHtml);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addAIMessageWithChart() {
+            const container = document.getElementById('chat-messages');
+            
+            const messageHtml = `
+                <div class="message-enter flex items-start space-x-3 max-w-3xl mx-auto">
+                    <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white flex-shrink-0">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="flex-1 glass-effect rounded-2xl rounded-tl-none p-4 shadow-sm">
+                        <p class="text-gray-800 mb-3">好的！这是你要的数据：</p>
+                        <div class="chart-container p-4 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg">
+                            <p class="text-center text-gray-600"><i class="fas fa-spinner fa-spin mr-2"></i>正在生成图表...</p>
+                        </div>
+                        <p class="mt-3 text-gray-600 text-sm">💡 需要进一步分析吗？</p>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', messageHtml);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const container = document.getElementById('chat-messages');
+            const html = `
+                <div id="typing-indicator" class="message-enter flex items-start space-x-3 max-w-3xl mx-auto">
+                    <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white flex-shrink-0">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="glass-effect rounded-2xl rounded-tl-none px-4 py-3 shadow-sm">
+                        <div class="typing-indicator flex space-x-1">
+                            <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function quickAction(action) {
+            document.getElementById('user-input').value = action;
+            sendMessage();
+        }
+
+        function quickSuggestion(suggestion) {
+            document.getElementById('user-input').value = suggestion;
+        }
+
+        function clearChat() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = '';
+            addMessage('对话已清空。有什么我可以帮你的吗？', 'ai');
+        }
+
+        let adminMode = false;
+        function toggleAdminMode() {
+            adminMode = !adminMode;
+            const btn = document.getElementById('admin-btn');
+            if (adminMode) {
+                btn.classList.remove('bg-purple-100', 'text-purple-700');
+                btn.classList.add('bg-red-500', 'text-white');
+                btn.innerHTML = '<i class="fas fa-shield-alt mr-2"></i>退出管理模式';
+            } else {
+                btn.classList.add('bg-purple-100', 'text-purple-700');
+                btn.classList.remove('bg-red-500', 'text-white');
+                btn.innerHTML = '<i class="fas fa-shield-alt mr-2"></i>管理员模式';
+            }
+        }
+    </script>
+</body>
+</html>

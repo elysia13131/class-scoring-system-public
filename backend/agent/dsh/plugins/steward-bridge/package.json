@@ -1,0 +1,8 @@
+{
+  "name": "steward-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "dsh tool bridge plugin: HTTP loopback to backend /api/internal/agent-tool"
+}

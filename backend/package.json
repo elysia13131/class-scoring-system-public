@@ -1,0 +1,39 @@
+{
+  "name": "class-scoring-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon --ignore data/ index.js"
+  },
+  "dependencies": {
+    "@agentlink/wechat": "file:./vendor/agentlink-wechat",
+    "@audio/decode-mp3": "^1.3.1",
+    "@deepseek-ai/dsh": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-sdk-client": "0.1.2-alpha.2",
+    "adm-zip": "^0.5.10",
+    "archiver": "^7.0.1",
+    "axios": "^1.13.6",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "docx": "^9.6.1",
+    "dsh-plugin-playwright": "file:./agent/dsh/plugins/dsh-plugin-playwright",
+    "express": "^4.18.2",
+    "firebase-admin": "^14.0.0",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.20.0",
+    "patchright": "^1.62.3",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.35.3",
+    "silk-wasm": "^3.7.1",
+    "socket.io": "^4.7.2",
+    "steward-bridge": "file:./agent/dsh/plugins/steward-bridge",
+    "steward-jsonrpc-server": "file:./agent/dsh/plugins/steward-jsonrpc-server",
+    "uuid": "^9.0.1",
+    "web-push": "^3.6.7",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

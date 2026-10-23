@@ -1,0 +1,1 @@
+{"name":"class-score-agent","version":"1.0.0","description":"AI Agent智能助手模块 - 集成DeepSeek大模型，支持三级记忆、工具调用、图表渲染","main":"index.js","scripts":{"start":"node index.js","dev":"node --watch index.js","test":"jest"},"dependencies":{"class-score-agent":"file:","openai":"^4.20.0","uuid":"^9.0.0"},"devDependencies":{"jest":"^29.7.0"}}

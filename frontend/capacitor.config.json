@@ -1,0 +1,13 @@
+{
+  "appId": "com.classscoring.app",
+  "appName": "班级评分系统",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "Filesystem": {
+      "children": []
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "class-scoring-system",
+  "version": "1.0.0",
+  "description": "班级评分系统",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && npm install && node index.js",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "reset:scores": "node tools/reset_scores.js",
+    "reset:week": "node tools/reset_week_to_one.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1",
+    "xlsx": "^0.18.5"
+  }
+}

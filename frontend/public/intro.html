@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>班级综合评分管理系统 | Class Scoring System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0a1628;
+      --navy-light: #132240;
+      --navy-mid: #1a3058;
+      --gold: #c9a84c;
+      --gold-light: #e8d08a;
+      --gold-glow: rgba(201, 168, 76, 0.15);
+      --cream: #f5f0e8;
+      --cream-dark: #e8dfd0;
+      --white: #ffffff;
+      --text: #1a1a2e;
+      --text-light: #5a6a7a;
+      --text-muted: #8a9aaa;
+      --accent-blue: #4a90d9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 40%, var(--navy-mid) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 30%, rgba(201, 168, 76, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 70%, rgba(74, 144, 217, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float 8s infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 7s; }
+    .particle:nth-child(2) { left: 25%; animation-delay: 1.5s; animation-duration: 9s; width: 2px; height: 2px; }
+    .particle:nth-child(3) { left: 40%; animation-delay: 0.8s; animation-duration: 8s; }
+    .particle:nth-child(4) { left: 55%; animation-delay: 2.5s; animation-duration: 10s; width: 4px; height: 4px; }
+    .particle:nth-child(5) { left: 70%; animation-delay: 1s; animation-duration: 7.5s; }
+    .particle:nth-child(6) { left: 85%; animation-delay: 3s; animation-duration: 9.5s; width: 2px; height: 2px; }
+    .particle:nth-child(7) { left: 50%; animation-delay: 0.3s; animation-duration: 11s; }
+    .particle:nth-child(8) { left: 15%; animation-delay: 4s; animation-duration: 6.5s; width: 3px; height: 3px; }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+      max-width: 900px;
+      animation: fadeInUp 1.2s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.4rem 1.4rem;
+      border: 1px solid var(--gold);
+      border-radius: 100px;
+      color: var(--gold);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      background: rgba(201, 168, 76, 0.1);
+      backdrop-filter: blur(4px);
+    }
+
+    .hero h1 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 .gold {
+      color: var(--gold);
+    }
+
+    .hero-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+      color: var(--gold-light);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+    }
+
+    .hero-desc {
+      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      color: rgba(255,255,255,0.7);
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 2.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(201, 168, 76, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,0.3);
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      justify-content: center;
+      margin-top: 3.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.2rem;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      animation: bounce 2s infinite;
+    }
+    .scroll-indicator .arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid var(--gold);
+      border-bottom: 2px solid var(--gold);
+      transform: rotate(45deg);
+      opacity: 0.5;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ===== NAV ===== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    .nav.scrolled {
+      background: rgba(10, 22, 40, 0.92);
+      backdrop-filter: blur(12px);
+      padding: 0.7rem 2rem;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+    }
+    .nav-logo {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo .gold { color: var(--gold); }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* ===== SECTIONS ===== */
+    .section {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .section-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      position: relative;
+    }
+    .section-tag::before, .section-tag::after {
+      content: '';
+      display: inline-block;
+      width: 30px;
+      height: 1px;
+      background: var(--gold);
+      vertical-align: middle;
+      margin: 0 10px;
+      opacity: 0.5;
+    }
+    .section-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+    .section-desc {
+      color: var(--text-light);
+      font-size: 1.05rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* ===== INTRO ===== */
+    .intro-section {
+      background: var(--white);
+    }
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .intro-text h3 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.6rem;
+      color: var(--navy);
+      margin-bottom: 1.2rem;
+    }
+    .intro-text p {
+      color: var(--text-light);
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+    .intro-features {
+      list-style: none;
+      margin-top: 1.5rem;
+    }
+    .intro-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .intro-features li::before {
+      content: '◆';
+      color: var(--gold);
+      font-size: 0.7rem;
+      margin-top: 0.3rem;
+      flex-shrink: 0;
+    }
+
+    .intro-visual {
+      position: relative;
+    }
+    .radar-preview {
+      background: linear-gradient(145deg, var(--navy), var(--navy-light));
+      border-radius: 16px;
+      padding: 2rem;
+      aspect-ratio: 1;
+      max-width: 420px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .radar-preview canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+    }
+
+    .radar-placeholder {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .radar-placeholder svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ===== FEATURES ===== */
+    .features-section {
+      background: var(--cream);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 2rem;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--accent-blue));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(201, 168, 76, 0.2);
+      box-shadow: 0 12px 40px rgba(10, 22, 40, 0.08);
+    }
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+      font-size: 1.4rem;
+    }
+    .feature-card h4 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.6rem;
+    }
+    .feature-card p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    /* ===== DIMENSIONS ===== */
+    .dims-section {
+      background: var(--white);
+    }
+    .dims-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .dim-card {
+      background: var(--cream);
+      border-radius: 14px;
+      padding: 1.8rem;
+      transition: all 0.3s ease;
+      border-left: 3px solid var(--gold);
+    }
+    .dim-card:hover {
+      background: var(--cream-dark);
+      transform: translateX(4px);
+    }
+    .dim-card h4 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .dim-card .score {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .dim-card .score small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .dim-card ul {
+      list-style: none;
+      margin-top: 0.8rem;
+    }
+    .dim-card ul li {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      padding: 0.25rem 0;
+      padding-left: 1rem;
+      position: relative;
+    }
+    .dim-card ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.6rem;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+
+    /* ===== ARCHITECTURE ===== */
+    .arch-section {
+      background: var(--cream);
+    }
+    .arch-diagram {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .arch-layer {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 1.8rem;
+      text-align: center;
+      border-top: 3px solid var(--gold);
+      transition: all 0.3s;
+    }
+    .arch-layer:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    }
+    .arch-layer .layer-icon {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+    }
+    .arch-layer h4 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+    .arch-layer p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    .arch-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+
+    /* ===== TECH STACK ===== */
+    .tech-section {
+      background: var(--navy);
+    }
+    .tech-section .section-title {
+      color: var(--white);
+    }
+    .tech-section .section-desc {
+      color: rgba(255,255,255,0.6);
+    }
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .tech-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .tech-item:hover {
+      background: rgba(201, 168, 76, 0.08);
+      border-color: rgba(201, 168, 76, 0.2);
+      transform: translateY(-3px);
+    }
+    .tech-item .tech-icon {
+      font-size: 2rem;
+      margin-bottom: 0.6rem;
+    }
+    .tech-item h5 {
+      color: var(--white);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .tech-item p {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.75rem;
+    }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      text-align: center;
+      padding: 6rem 2rem;
+    }
+    .cta-section h2 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 2.5rem;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .cta-section p {
+      color: rgba(255,255,255,0.6);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      font-size: 1.05rem;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .footer p {
+      color: rgba(255,255,255,0.3);
+      font-size: 0.85rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 968px) {
+      .intro-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .dims-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .tech-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(10, 22, 40, 0.98);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 1rem;
+      }
+      .nav-links.open {
+        display: flex;
+      }
+      .nav-toggle {
+        display: block;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .dims-grid {
+        grid-template-columns: 1fr;
+      }
+      .tech-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .arch-diagram {
+        grid-template-columns: 1fr;
+      }
+      .hero-stats {
+        gap: 1.5rem;
+      }
+      .section {
+        padding: 4rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="navbar">
+  <a href="#" class="nav-logo">班级评分<span class="gold">系统</span></a>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+  <ul class="nav-links">
+    <li><a href="#intro">系统简介</a></li>
+    <li><a href="#features">核心功能</a></li>
+    <li><a href="#dims">评分维度</a></li>
+    <li><a href="#tech">技术栈</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">v1.6 · 班级综合管理平台</div>
+    <h1>班级综合<br><span class="gold">评分管理系统</span></h1>
+    <div class="hero-subtitle">Class Scoring Management System</div>
+    <p class="hero-desc">
+      以"六维雷达图"评分体系为核心，集实时评分、AI 智能分析、心理驿站、
+      健康管理于一体的数字化班级管理平台，助力精细化、科学化管理。
+    </p>
+    <div class="hero-actions">
+      <a href="#features" class="btn btn-primary">探索功能 ↓</a>
+      <a href="#tech" class="btn btn-outline">技术架构</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">6</span>
+        <span class="stat-label">评分维度</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">29</span>
+        <span class="stat-label">二级指标</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">10+</span>
+        <span class="stat-label">功能模块</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">2</span>
+        <span class="stat-label">部署模式</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>向下滚动</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="intro-section section" id="intro">
+  <div class="section-header">
+    <span class="section-tag">About</span>
+    <h2 class="section-title">系统简介</h2>
+    <p class="section-desc">面向班级管理的综合性信息化平台</p>
+  </div>
+  <div class="intro-grid">
+    <div class="intro-text">
+      <h3>数字化赋能班级管理</h3>
+      <p>
+        班级综合评分管理系统是一套专为班级管理场景设计的综合性信息化平台。
+        系统以"六维雷达图"评分体系为核心，覆盖学员评价、数据分析、
+        心理健康、健康管理等全方位班级管理需求。
+      </p>
+      <p>
+        采用前后端分离架构，前端基于 React 18 + Vite 构建，搭配
+        Tailwind CSS 实现现代化响应式界面；后端采用 Node.js + Express 框架，
+        通过 Socket.IO 实现实时数据同步。同时支持 Android 移动端应用，
+        真正实现"指尖上的班级管理"。
+      </p>
+      <ul class="intro-features">
+        <li>科学的多维度学员综合素质评价体系</li>
+        <li>自评与他评结合，确保评价客观公正</li>
+        <li>WebSocket 实时同步，数据变更即刻生效</li>
+        <li>集成 DeepSeek AI 大模型，智能分析学员成长趋势</li>
+        <li>支持公网云部署和局域网自部署双模式</li>
+      </ul>
+    </div>
+    <div class="intro-visual">
+      <div class="radar-preview">
+        <svg viewBox="0 0 300 300" width="260" height="260">
+          <polygon points="150,20 260,110 230,230 70,230 40,110" fill="rgba(201,168,76,0.08)" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+          <polygon points="150,50 225,125 210,200 90,200 75,125" fill="rgba(201,168,76,0.06)" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+          <polygon points="150,80 195,140 185,175 115,175 105,140" fill="rgba(201,168,76,0.04)" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+          <line x1="150" y1="20" x2="150" y2="230" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <line x1="40" y1="110" x2="260" y2="110" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <line x1="70" y1="230" x2="230" y2="230" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <!-- Data polygon -->
+          <polygon points="150,35 240,120 220,210 100,215 60,120" fill="rgba(201,168,76,0.2)" stroke="var(--gold)" stroke-width="2"/>
+          <circle cx="150" cy="35" r="4" fill="var(--gold)"/>
+          <circle cx="240" cy="120" r="4" fill="var(--gold)"/>
+          <circle cx="220" cy="210" r="4" fill="var(--gold)"/>
+          <circle cx="100" cy="215" r="4" fill="var(--gold)"/>
+          <circle cx="60" cy="120" r="4" fill="var(--gold)"/>
+          <!-- Labels -->
+          <text x="150" y="12" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="9">学习成绩</text>
+          <text x="272" y="114" text-anchor="start" fill="rgba(255,255,255,0.6)" font-size="9">体能素质</text>
+          <text x="238" y="248" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="9">班级贡献</text>
+          <text x="62" y="248" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="9">遵章守纪</text>
+          <text x="28" y="114" text-anchor="end" fill="rgba(255,255,255,0.6)" font-size="9">人文素养</text>
+          <!-- Center label -->
+          <text x="150" y="145" text-anchor="middle" fill="var(--gold)" font-size="13" font-weight="700">六维雷达图</text>
+          <text x="150" y="162" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="8">综合评分可视化</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section section" id="features">
+  <div class="section-header">
+    <span class="section-tag">Features</span>
+    <h2 class="section-title">核心功能模块</h2>
+    <p class="section-desc">全方位覆盖班级管理各个场景</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(201,168,76,0.12);">📊</div>
+      <h4>六维评分系统</h4>
+      <p>围绕学习成绩、体能素质、人文素养、遵章守纪、班级贡献、管理能力六大维度，细分 29 项二级指标，支持自评与他评，自动计算综合得分。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(74,144,217,0.12);">⚡</div>
+      <h4>实时数据同步</h4>
+      <p>基于 WebSocket 技术实现评分数据的实时推送。评分提交后即刻同步到所有终端，无需手动刷新页面。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(201,168,76,0.12);">🤖</div>
+      <h4>AI 智能助教</h4>
+      <p>集成 DeepSeek 大语言模型，提供智能对话、个人成长分析、全班分析报告、数据洞察和图表生成等 AI 功能。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(74,144,217,0.12);">🧠</div>
+      <h4>心理驿站</h4>
+      <p>关注学员心理健康，支持互评提名、心情记录、心理预警、社交关系图谱、心理咨询预约和每周心理报告。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(201,168,76,0.12);">🏃</div>
+      <h4>体能健康管理</h4>
+      <p>BMI 指数追踪、体测成绩导入导出、成绩排名、伤病管理，全方位关注学员身体健康状况。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(74,144,217,0.12);">📱</div>
+      <h4>移动端支持</h4>
+      <p>基于 Capacitor 封装为 Android APK，学员可通过手机随时随地进行评分和查看数据，体验流畅。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(201,168,76,0.12);">📈</div>
+      <h4>数据可视化</h4>
+      <p>基于 ECharts 提供雷达图、趋势图、排名图等多种可视化图表，数据变化一目了然。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(74,144,217,0.12);">📋</div>
+      <h4>值班管理</h4>
+      <p>发布值班任务、记录值班历史、统计值班次数，确保班级日常事务公平分配。</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background:rgba(201,168,76,0.12);">🔐</div>
+      <h4>安全管理</h4>
+      <p>多级管理员权限体系，个人密码验证，数据持久化存储，支持备份恢复，确保数据安全。</p>
+    </div>
+  </div>
+</section>
+
+<!-- DIMENSIONS -->
+<section class="dims-section section" id="dims">
+  <div class="section-header">
+    <span class="section-tag">Scoring</span>
+    <h2 class="section-title">六维评分体系</h2>
+    <p class="section-desc">科学、客观、多维度的学员综合素质评价模型</p>
+  </div>
+  <div class="dims-grid">
+    <div class="dim-card">
+      <h4>📚 学习成绩</h4>
+      <div class="score">10 <small>分</small></div>
+      <ul>
+        <li>预习准备</li>
+        <li>课堂参与</li>
+        <li>复习巩固</li>
+        <li>知识应用</li>
+        <li>学业成果</li>
+      </ul>
+    </div>
+    <div class="dim-card">
+      <h4>💪 体能素质</h4>
+      <div class="score">10 <small>分</small></div>
+      <ul>
+        <li>基础体能成绩</li>
+        <li>训练态度方法</li>
+        <li>健康管理</li>
+        <li>伤病管理</li>
+        <li>体能提升</li>
+      </ul>
+    </div>
+    <div class="dim-card">
+      <h4>📖 人文素养</h4>
+      <div class="score">10 <small>分</small></div>
+      <ul>
+        <li>阅读学习</li>
+        <li>文体活动</li>
+        <li>自律意识</li>
+        <li>问题解决</li>
+        <li>共情能力</li>
+      </ul>
+    </div>
+    <div class="dim-card">
+      <h4>⚖️ 遵章守纪</h4>
+      <div class="score">10 <small>分</small></div>
+      <ul>
+        <li>队列内务</li>
+        <li>值班岗哨</li>
+        <li>日常规范</li>
+        <li>课堂纪律</li>
+        <li>安全意识</li>
+      </ul>
+    </div>
+    <div class="dim-card">
+      <h4>🤝 班级贡献</h4>
+      <div class="score">10 <small>分</small></div>
+      <ul>
+        <li>本职工作</li>
+        <li>环境维护</li>
+        <li>集体建设</li>
+        <li>荣誉争取</li>
+        <li>互助支持</li>
+      </ul>
+    </div>
+    <div class="dim-card">
+      <h4>👔 管理能力</h4>
+      <div class="score">10 <small>分</small></div>
+      <ul>
+        <li>职责履行</li>
+        <li>能力表现</li>
+        <li>活动组织</li>
+        <li>改进提升</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="arch-section section" id="arch">
+  <div class="section-header">
+    <span class="section-tag">Architecture</span>
+    <h2 class="section-title">系统架构</h2>
+    <p class="section-desc">前后端分离 + 实时通信 + AI 引擎</p>
+  </div>
+  <div class="arch-diagram">
+    <div class="arch-layer">
+      <div class="layer-icon">🎨</div>
+      <h4>前端展示层</h4>
+      <p>React 18 · Vite 5<br>Tailwind CSS 3<br>ECharts 可视化<br>Capacitor 移动端</p>
+    </div>
+    <div class="arch-connector">⟷ WebSocket ⟷</div>
+    <div class="arch-layer">
+      <div class="layer-icon">⚙️</div>
+      <h4>后端服务层</h4>
+      <p>Express 4 · Socket.IO<br>RESTful API<br>AI Agent (DeepSeek)<br>JSON 文件存储</p>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="tech-section section" id="tech">
+  <div class="section-header">
+    <span class="section-tag" style="color:var(--gold-light);">Technology</span>
+    <h2 class="section-title">技术栈</h2>
+    <p class="section-desc">现代、高效、可靠的技术选型</p>
+  </div>
+  <div class="tech-grid">
+    <div class="tech-item">
+      <div class="tech-icon">⚛️</div>
+      <h5>React 18</h5>
+      <p>前端框架</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">⚡</div>
+      <h5>Vite 5</h5>
+      <p>构建工具</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🎨</div>
+      <h5>Tailwind CSS</h5>
+      <p>样式框架</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">📊</div>
+      <h5>ECharts 5</h5>
+      <p>数据可视化</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🟢</div>
+      <h5>Node.js</h5>
+      <p>运行环境</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🚂</div>
+      <h5>Express 4</h5>
+      <p>后端框架</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🔌</div>
+      <h5>Socket.IO</h5>
+      <p>实时通信</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">🧠</div>
+      <h5>DeepSeek</h5>
+      <p>AI 引擎</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">📦</div>
+      <h5>Capacitor 6</h5>
+      <p>移动端封装</p>
+    </div>
+    <div class="tech-item">
+      <div class="tech-icon">☁️</div>
+      <h5>Zeabur</h5>
+      <p>云部署平台</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>开启数字化班级管理之旅</h2>
+  <p>查看完整用户文档，了解更多系统功能、使用方法与部署指南。</p>
+  <div class="hero-actions">
+    <a href="班级综合评分管理系统_用户文档.docx" class="btn btn-primary">📄 下载用户文档</a>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="#intro">系统简介</a>
+    <a href="#features">核心功能</a>
+    <a href="#dims">评分维度</a>
+    <a href="#tech">技术栈</a>
+  </div>
+  <p>班级综合评分管理系统 Class Scoring Management System · v1.0.0</p>
+</footer>
+
+<script>
+  // Navbar scroll effect
+  window.addEventListener('scroll', function() {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 60) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  });
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      // Close mobile nav
+      document.querySelector('.nav-links')?.classList.remove('open');
+    });
+  });
+</script>
+
+</body>
+</html>

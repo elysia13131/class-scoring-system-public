@@ -1,0 +1,54 @@
+{
+  "name": "dsh-plugin-playwright",
+  "version": "0.2.0-fork.1",
+  "description": "Fork of dsh-plugin-playwright with frame-piercing interact, coordinate click, element box, and stealth hardening (self-hosted file: dependency)",
+  "private": true,
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "README.md",
+    "README.zh.md",
+    "AGENTS.md",
+    "LICENSE",
+    "cordis.patch.yml"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness",
+    "playwright",
+    "browser-automation",
+    "mcp",
+    "tools",
+    "ai-agent"
+  ],
+  "scripts": {
+    "build": "node node_modules/typescript/bin/tsc -p tsconfig.build.json",
+    "typecheck": "node node_modules/typescript/bin/tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "smoke": "node --import tsx/esm test/smoke.ts"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "*",
+    "js-yaml": "^4.1.0",
+    "playwright": "^1.61.1"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}

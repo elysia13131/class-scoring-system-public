@@ -1,0 +1,12 @@
+{
+  "name": "steward-jsonrpc-server",
+  "description": "Fork of @deepseek-ai/dsh-sdk-jsonrpc-server with cross-process session resume (auto-resume materialized logs in createSession; steward patch)",
+  "version": "0.1.2-alpha.2",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  }
+}

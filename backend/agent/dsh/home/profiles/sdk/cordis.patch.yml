@@ -1,0 +1,17 @@
+# steward-bridge: backend tool bridge (auto-managed by DshAgentEngine)
+- insert:
+    - id: steward-bridge
+      name: steward-bridge
+
+# steward-jsonrpc-server: fork of @deepseek-ai/dsh-sdk-jsonrpc-server with
+# cross-process session resume (auto-resume materialized logs). The bundle
+# row is disabled (row patches cannot rename — name mismatch is skipped
+# silently), and the fork is inserted as its own entry instead.
+- id: sdk-jsonrpc-server
+  disabled: true
+- insert:
+    - id: steward-jsonrpc-server
+      name: steward-jsonrpc-server
+      inject: [sdkAppStartup, loader]
+      config:
+        maxTokensAsSuccess: !!js "process.env.DSH_MAX_TOKENS_AS_SUCCESS === undefined ? true : JSON.parse(process.env.DSH_MAX_TOKENS_AS_SUCCESS)"

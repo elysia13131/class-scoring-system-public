@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+frontend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# VS
+.vs/
+
+# Data files (for deployment) - 只排除数据文件，保留代码文件（*.js）
+backend/data/*.json
+backend/data/*.json.gz
+backend/data/scores/*.json.gz
+backend/data/wechat/**/*.json
+backend/data/wechat/**/*.json.gz
+backend/data/agent_memories/*.json.gz
+backend/data/agent_profiles/*.json.gz
+backend/data/uploads/*
+backend/data/apk/*
+backend/data/reports/*
+play/
+tools/
+*.zip
+*.ps1
+*.sh
+
+# Android 项目（本地构建 APK 用，Zeabur 不需要）
+frontend/android/
+jiguang-sdk/
+jiguang-sdk-temp/
+
+# 本地数据（仅根目录 data/，不影响 backend/data/ 下的代码）
+/data/

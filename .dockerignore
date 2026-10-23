@@ -1,0 +1,13 @@
+# Docker 构建上下文瘦身（git 构建时生效；CLI 直传不受此文件影响）
+# ⚠️ backend/data 下的 *.js（checkin_records/store.js、adminContexts.js 等）
+# 是被 require 的运行时代码，必须留在镜像里（/app/backend/data）——
+# 持久化卷挂在另一个路径 /backend/data，只放业务数据。历史教训见 c4eeae9。
+node_modules
+**/node_modules
+.git
+backend/.cli.env
+
+# APK 产物 21MB：下载端点走卷（DATA_DIR/apk），镜像不需要
+backend/data/apk
+
+*.log

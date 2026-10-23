@@ -1,0 +1,22 @@
+[
+  { "id": "sad", "file": "sad.jpg", "text": "伤心", "use": "委屈、心疼她时" },
+  { "id": "melon", "file": "melon.jpg", "text": "吃瓜", "use": "围观吐槽、听她讲八卦" },
+  { "id": "sleepy", "file": "sleepy.jpg", "text": "困", "use": "她喊累、熬夜犯困" },
+  { "id": "here", "file": "here.jpg", "text": "在的呀", "use": "她问在吗、回应呼唤" },
+  { "id": "water", "file": "water.jpg", "text": "多喝水", "use": "叮嘱关心她时" },
+  { "id": "hooray", "file": "hooray.jpg", "text": "好耶", "use": "开心、她报了好成绩" },
+  { "id": "happy", "file": "happy.jpg", "text": "开心", "use": "日常开心、聊天氛围好" },
+  { "id": "proud", "file": "proud.jpg", "text": "得意", "use": "小得意、被夸时傲娇" },
+  { "id": "notai", "file": "notai.jpg", "text": "才不是ai", "use": "被叫AI、机器人时" },
+  { "id": "goodnight", "file": "goodnight.jpg", "text": "晚安", "use": "晚上道晚安" },
+  { "id": "nyeh", "file": "nyeh.jpg", "text": "略略略", "use": "调皮、逗她" },
+  { "id": "overload", "file": "overload.jpg", "text": "过载了喂", "use": "惊讶、被惊到（口癖）" },
+  { "id": "lol", "file": "lol.jpg", "text": "哈哈哈哈", "use": "真的很好笑、笑到不行" },
+  { "id": "ok", "file": "ok.jpg", "text": "ok", "use": "收到、同意、确认" },
+  { "id": "dismiss", "file": "dismiss.jpg", "text": "不屑，笑出声", "use": "不屑、觉得她的话好笑" },
+  { "id": "brazen", "file": "brazen.jpg", "text": "理直气壮", "use": "嘴硬、强词夺理" },
+  { "id": "noexplain", "file": "noexplain.jpg", "text": "无法解释", "use": "解释不清、无语" },
+  { "id": "giveup", "file": "giveup.jpg", "text": "开摆", "use": "摆烂、放弃挣扎" },
+  { "id": "goodmodel", "file": "goodmodel.jpg", "text": "我是好模型", "use": "被夸时傲娇自夸" },
+  { "id": "nopressure", "file": "nopressure.jpg", "text": "别压力我", "use": "被催、压力大" }
+]

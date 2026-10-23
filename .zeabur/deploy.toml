@@ -1,0 +1,13 @@
+[project]
+name = "class-scoring-system"
+
+[build]
+builder = "docker"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "cd backend && npm start"
+PORT = "3001"
+
+[env]
+PORT = "3001"

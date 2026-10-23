@@ -1,0 +1,96 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+frontend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+backend/.cli.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# VS
+.vs/
+
+# Data files (persisted on volume, not in git)
+backend/data/*.json
+backend/data/*.json.gz
+backend/data/scores/**/*.json.gz
+backend/data/agent_memories/*.json.gz
+backend/data/agent_profiles/*.json.gz
+backend/data/checkin_records/*.json
+backend/data/conversation_memory/*.json
+backend/data/wechat/*.json
+backend/data/chart_images/*
+backend/data/temp_download/*
+backend/data/uploads/*
+!backend/data/.gitkeep
+
+# Other generated/design files
+class-scoring-mobile/
+class-scoring-ios/
+--brand-css
+
+# Local test files (not for production)
+*.xlsx
+!backend/data/seed/*.xlsx
+
+# dsh 运行时状态（会话日志/缓存，运行时重建，永不入库）
+backend/agent/dsh/home/sessions/
+backend/agent/dsh/home/native-cache/
+backend/agent/dsh/home/storages/
+backend/agent/dsh/home/attachments/
+backend/agent/dsh/home/llm-deepseek/
+backend/agent/dsh/home/*.bin
+backend/agent/dsh/home/.anonymous-user-id
+backend/agent/dsh/home/.npmrc
+backend/agent/dsh/home/playwright-profile/
+backend/agent/dsh/home/profiles/*/.npmrc
+backend/agent/dsh/workspace/data/
+backend/agent/dsh/workspace/.dsh/
+
+# 超限模式运行目录（per-会话工作区/home/共享缓存，卷内持久化，永不入库）
+backend/data/overdrive/
+
+# 本地杂项（数据锁/审计日志/调试输出/表情包底图）
+backend/data/.seed.lock
+backend/data/agent_cli_audit.jsonl
+backend/data/checkin_records/*.bak*
+backend/data/stickers/
+backend/scripts/_dbg-out.txt
+9b7a01dabcf76da94a1ee135b0353c17.jpg
+/表情包/
+.deploy-stage/
+
+# 本地运行残留（微信/iLink 运行时状态，持久卷重建，不入库）
+backend/data/wechat/
+
+# APK 安装包（改经 /api/admin/upload-apk 上传，不入库）
+backend/data/apk/*.apk
+backend/data/apk/**/*.apk
+backend/data/apk/*.idsig
+
+# 敏感名单（学生成绩数据，仅本地）
+/挂科人员名单.csv
+
+# 研究参考（第三方仓库克隆，仅本地）
+/research/

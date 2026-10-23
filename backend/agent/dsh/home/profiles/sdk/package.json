@@ -1,0 +1,18 @@
+{
+  "name": "dsh-profile-sdk",
+  "private": true,
+  "dependencies": {
+    "steward-bridge": "file:../../../plugins/steward-bridge",
+    "steward-jsonrpc-server": "file:../../../plugins/steward-jsonrpc-server",
+    "dsh-plugin-playwright": "^0.2.0"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-sdk-app"
+      ],
+      "patchReload": "startup"
+    }
+  }
+}

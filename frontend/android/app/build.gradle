@@ -1,0 +1,67 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace "com.classscoring.app"
+    compileSdk rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.classscoring.app"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 25
+        versionName "1.16"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [
+            HUAWEI_APPID   : "",
+            XIAOMI_APPID   : "",
+            XIAOMI_APPKEY  : "",
+            OPPO_APPKEY    : "",
+            OPPO_APPID     : "",
+            OPPO_APPSECRET : "",
+            VIVO_APPID     : "",
+            VIVO_APPKEY    : "",
+            MEIZU_APPID    : "",
+            MEIZU_APPKEY   : "",
+            HONOR_APPID    : ""
+        ]
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+    // JPush SDK (local)
+    implementation fileTree(include: ['*.aar'], dir: 'libs')
+    implementation files('libs/jpush-android-6.1.0.jar')
+    implementation files('libs/jpush-android-plugin-huawei-v6.1.0.jar')
+    implementation files('libs/jpush-android-plugin-xiaomi-v6.1.0.jar')
+    implementation files('libs/jpush-android-plugin-oppo-v6.1.0.jar')
+    implementation files('libs/jpush-android-plugin-vivo-v6.1.0.jar')
+    implementation files('libs/jpush-android-plugin-meizu-v6.1.0.jar')
+    implementation files('libs/jpush-android-plugin-honor-v6.1.0.jar')
+}
+
+apply from: 'capacitor.build.gradle'
