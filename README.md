@@ -9,17 +9,6 @@
 
 ---
 
-## 仓库与部署
-
-| 用途 | 仓库 | 说明 |
-|---|---|---|
-| **部署源** | [`elysia13131/class-scoring-system`](https://github.com/elysia13131/class-scoring-system)（私有） | 唯一部署仓库。推送到 `master` 即触发 Zeabur 自动构建，生产数据存放在 Zeabur 持久化卷。 |
-| 公开快照 | [`elysia13131/class-scoring-system-public`](https://github.com/elysia13131/class-scoring-system-public)（公开） | 从部署仓库导出的单次快照，无历史提交，仅用于展示与阅读代码；**不接入 Zeabur，不参与部署**。 |
-
-日常开发一律提交到私有部署仓库；需要对外展示时，再从该仓库导出一份清理过敏感信息的快照推到公开仓库。
-
----
-
 ## 功能
 
 ### 评分与统计
@@ -138,11 +127,9 @@ cd frontend && npm run build   # 产物在 frontend/dist
 
 ## 部署
 
-唯一的部署源是私有仓库 `elysia13131/class-scoring-system` 的 `master` 分支——Zeabur 已关联该仓库，推送到 `master` 即自动构建部署。公开快照仓库不接入 Zeabur。
+项目自带 `Dockerfile`，Zeabur 关联本仓库后推送 `master` 即自动构建部署。
 
-项目自带 `Dockerfile`，新环境部署时：
-
-1. 新建服务并关联上述私有仓库
+1. 新建服务并关联仓库
 2. 添加持久化卷，挂载路径 `/backend/data`
 3. 按需配置上表环境变量
 4. 绑定域名
